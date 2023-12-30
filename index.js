@@ -53,6 +53,10 @@ app.post("/whatsapp",async (req, res)=>{
   
 })
 
+app.get("/",(req,res)=>{
+  res.send("Hello World, im Running")
+})
+
 
 app.listen(port,()=>{
 console.log("Server running on PORT: "+port)
