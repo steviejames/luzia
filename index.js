@@ -1,32 +1,33 @@
-// Supports ES6
-import { create } from "@wppconnect-team/wppconnect";
-import dotenv from "dotenv";
-import express from "express";
-import cookieParser from "cookie-parser";
-import bodyParser from "body-parser";
-import cors from "cors";
-dotenv.config();
-const port = process.env.PORT || 3333;
-
+const express = require("express");
 const app = express();
+const port = process.env.PORT ? Number(process.env.PORT) : 3030;
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
+const cd_client = require("./services");
+dotenv.config();
 
-app.use(express.urlencoded());
+//Midllewares//
+app.use(cors());
+
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(cors());
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
 
-//Starts the bot
-const wpp = create({ session: "luzia-bot" });
+//Bot Initialization//
+cd_client.initialize();
 
-app.post("/whatsapp", async (req, res) => {
-  const client = await wpp;
+
+//Routes
+app.post("/convite-digital", async (req, res) => {
   const { recipients, message } = req.body;
   const serializedRecipients = recipients.map((recipient, i) => {
-    const result = client.sendText(`${recipient}@c.us`, message);
+    const result = cd_client.sendMessage(`${recipient}@c.us`, message);
+
     return result;
   });
 
@@ -34,23 +35,15 @@ app.post("/whatsapp", async (req, res) => {
     const result = await Promise.all(serializedRecipients);
     res.send({
       message: "Succeso!",
-      data: result.map((item) => item.to.split("@")[0]),
+      data: result.map((item) => item.id.remote),
     });
   } catch (error) {
     console.log(error);
     res.status(500).send();
   }
-})
-
-app.get("/whatsapp", async (req, res) => {
-  const client = await wpp;
-  client.res.send("Hello World, im Running"  + client.session);
-})
-app.get("/", async (req, res) => {
-  const client = await wpp;
-  client.res.send("Hello World, im Running");
 });
 
+//Server Initialization//
 app.listen(port, () => {
-  console.log("Server running on PORT: " + port);
+  console.log(`Whatsapp Server Running on port ${port}`);
 });
