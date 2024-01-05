@@ -5,7 +5,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
-const cd_client = require("./services");
+const cd_client = require("./services").default;
 dotenv.config();
 
 //Midllewares//
