@@ -1,18 +1,18 @@
-const express = require("express");
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { json } from "body-parser";
+import { config } from "dotenv";
+import cd_client from "./services";
+config();
+
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3030;
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
-const cd_client = require("./services").default;
-dotenv.config();
-
 //Midllewares//
 app.use(cors());
 
 app.use(cookieParser());
-app.use(bodyParser.json());
+app.use(json());
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
