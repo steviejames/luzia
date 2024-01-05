@@ -4,7 +4,6 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import { config } from "dotenv";
 
-
 import { Client } from "whatsapp-web.js";
 import qrTerminal from "qrcode-terminal";
 
@@ -13,16 +12,36 @@ const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3030;
 const client = new Client({
   puppeteer: {
-    args: ["--no-sandbox"],
-    headless: false,
-    
+    args: [
+      "--disable-web-security",
+      "--no-sandbox",
+      "--disable-web-security",
+      "--aggressive-cache-discard",
+      "--disable-cache",
+      "--disable-application-cache",
+      "--disable-offline-load-stale-cache",
+      "--disk-cache-size=0",
+      "--disable-background-networking",
+      "--disable-default-apps",
+      "--disable-extensions",
+      "--disable-sync",
+      "--disable-translate",
+      "--hide-scrollbars",
+      "--metrics-recording-only",
+      "--mute-audio",
+      "--no-first-run",
+      "--safebrowsing-disable-auto-update",
+      "--ignore-certificate-errors",
+      "--ignore-ssl-errors",
+      "--ignore-certificate-errors-spki-list",
+    ],
   },
 });
 
 client.on("qr", (qr) => {
   console.log("QR RECEIVED");
   console.log("Code: " + qr);
- qrTerminal.generate(qr, { small: true });
+  qrTerminal.generate(qr, { small: true });
 });
 
 client.on("ready", () => {
@@ -42,7 +61,6 @@ app.use((err, req, res, next) => {
 
 //Bot Initialization//
 client.initialize();
-
 
 //Routes
 app.post("/convite-digital", async (req, res) => {
