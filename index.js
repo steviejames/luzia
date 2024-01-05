@@ -14,6 +14,8 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3030;
 const client = new Client({
   puppeteer: {
     args: ["--no-sandbox"],
+    headless: false,
+    
   },
 });
 
