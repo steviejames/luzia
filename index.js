@@ -1,32 +1,52 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { json } from "body-parser";
+import bodyParser from "body-parser";
 import { config } from "dotenv";
-import cd_client from "./services";
-config();
 
+
+import { Client } from "whatsapp-web.js";
+import qrTerminal from "qrcode-terminal";
+
+config();
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3030;
+const client = new Client({
+  puppeteer: {
+    args: ["--no-sandbox"],
+  },
+});
+
+client.on("qr", (qr) => {
+  console.log("QR RECEIVED");
+  console.log("Code: " + qr);
+ qrTerminal.generate(qr, { small: true });
+});
+
+client.on("ready", () => {
+  console.log("Client is ready!");
+});
+client.on("authenticated", (session) => {});
+
 //Midllewares//
 app.use(cors());
 
 app.use(cookieParser());
-app.use(json());
+app.use(bodyParser.json());
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
 
 //Bot Initialization//
-cd_client.initialize();
+client.initialize();
 
 
 //Routes
 app.post("/convite-digital", async (req, res) => {
   const { recipients, message } = req.body;
   const serializedRecipients = recipients.map((recipient, i) => {
-    const result = cd_client.sendMessage(`${recipient}@c.us`, message);
+    const result = client.sendMessage(`${recipient}@c.us`, message);
 
     return result;
   });
