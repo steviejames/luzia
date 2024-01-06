@@ -39,6 +39,7 @@ client.initialize();
 //Routes
 app.post("/convite-digital", async (req, res) => {
   const { recipients, message } = req.body;
+  if(!recipients.length > 0) res.status(400).send({message: "No hay destinatarios"});
   const serializedRecipients = recipients.map((recipient, i) => {
     const result = client.sendMessage(`${recipient}@c.us`, message);
 
