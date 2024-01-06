@@ -4,19 +4,13 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import { config } from "dotenv";
 
-import { Client } from "whatsapp-web.js";
+import { Client, LocalAuth } from "whatsapp-web.js";
 import qrTerminal from "qrcode-terminal";
 
 config();
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3030;
-const client = new Client({
-  puppeteer: {
-    args: [
-      "--no-sandbox",
-    ],
-  },
-});
+const client = new Client({authStrategy:LocalAuth, qrMaxRetries: 2, takeoverOnConflict: true});
 
 client.on("qr", (qr) => {
   console.log("QR RECEIVED");
