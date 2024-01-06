@@ -57,6 +57,10 @@ app.post("/convite-digital", async (req, res) => {
   }
 });
 
+
+app.get("/keep-alive", (req, res) => {
+  res.send("Whatsapp Server is running");
+})
 //Server Initialization//
 app.listen(port, () => {
   console.log(`Whatsapp Server Running on port ${port}`);
